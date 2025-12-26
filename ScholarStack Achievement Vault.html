@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScholarStack - Achievement Vault</title>
+    <style>
+        :root {
+            --primary: #2078E0;
+            --primary-dark: #1558B8;
+            --success: #21808D;
+            --accent: #FF6B6B;
+            --bg-light: #F5F5F5;
+            --bg-white: #FFFFFF;
+            --text-dark: #1F2121;
+            --text-secondary: #626C7C;
+            --border-color: #E0E0E0;
+            --gold: #FFD700;
+            --space-8: 8px;
+            --space-16: 16px;
+            --space-24: 24px;
+            --space-32: 32px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: var(--space-32);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-16);
+        }
+
+        .header-content h1 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: var(--space-24);
+            font-size: 14px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-32);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: var(--space-24);
+            margin-bottom: var(--space-32);
+        }
+
+        .profile-strength {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: var(--space-24);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .strength-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: var(--space-16);
+            display: flex;
+            align-items: center;
+            gap: var(--space-8);
+        }
+
+        .strength-meter {
+            width: 100%;
+            height: 12px;
+            background: var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: var(--space-16);
+        }
+
+        .strength-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, var(--primary) 100%);
+            border-radius: 6px;
+            transition: width 0.3s ease;
+        }
+
+        .category-breakdown {
+            font-size: 13px;
+            margin-bottom: var(--space-8);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            background: var(--bg-light);
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: var(--space-8);
+            margin-bottom: var(--space-8);
+        }
+
+        .category-tag.strong {
+            background: rgba(32, 120, 224, 0.1);
+            color: var(--primary);
+        }
+
+        .category-tag.weak {
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--accent);
+        }
+
+        .locker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-16);
+        }
+
+        .locker-door {
+            background: linear-gradient(135deg, #4A5568 0%, #2D3748 100%);
+            border-radius: 8px;
+            padding: var(--space-24);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid transparent;
+        }
+
+        .locker-door:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .locker-door.new {
+            border: 2px dashed var(--border-color);
+            background: var(--bg-white);
+            color: var(--text-secondary);
+        }
+
+        .locker-door.new:hover {
+            border-color: var(--primary);
+            background: rgba(32, 120, 224, 0.05);
+        }
+
+        .achievement-icon {
+            font-size: 48px;
+            margin-bottom: var(--space-8);
+        }
+
+        .achievement-title {
+            font-weight: 600;
+            color: white;
+            font-size: 14px;
+            margin-bottom: var(--space-8);
+        }
+
+        .locker-door.new .achievement-title {
+            color: var(--text-secondary);
+        }
+
+        .achievement-category {
+            font-size: 12px;
+            opacity: 0.8;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .locker-door.new .achievement-category {
+            color: var(--text-secondary);
+        }
+
+        .tabs {
+            display: flex;
+            gap: var(--space-16);
+            margin-bottom: var(--space-24);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab {
+            padding: var(--space-16) 0;
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-16);
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: var(--space-8);
+            font-size: 14px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: var(--space-12) var(--space-16);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(32, 120, 224, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-16);
+        }
+
+        .btn {
+            padding: var(--space-12) var(--space-24);
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .btn-small {
+            padding: var(--space-8) var(--space-16);
+            font-size: 13px;
+        }
+
+        .btn-danger {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #E85555;
+        }
+
+        .achievement-card {
+            background: var(--bg-white);
+            border-radius: 8px;
+            padding: var(--space-16);
+            border-left: 4px solid var(--primary);
+            margin-bottom: var(--space-16);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .achievement-card.academic {
+            border-left-color: #3B82F6;
+        }
+
+        .achievement-card.leadership {
+            border-left-color: #F59E0B;
+        }
+
+        .achievement-card.volunteer {
+            border-left-color: #10B981;
+        }
+
+        .achievement-card.arts {
+            border-left-color: #EC4899;
+        }
+
+        .achievement-card.sport {
+            border-left-color: #EF4444;
+        }
+
+        .achievement-card.professional {
+            border-left-color: #8B5CF6;
+        }
+
+        .achievement-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: var(--space-8);
+        }
+
+        .achievement-card-title {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .achievement-card-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .achievement-card-body {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-8);
+        }
+
+        .achievement-card-meta {
+            display: flex;
+            gap: var(--space-8);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-8);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--bg-light);
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: var(--space-8);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: var(--space-32);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-24);
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .scholarship-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            padding: var(--space-16);
+            margin-bottom: var(--space-16);
+        }
+
+        .scholarship-name {
+            font-weight: 600;
+            margin-bottom: var(--space-8);
+        }
+
+        .scholarship-match {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--space-32);
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: var(--space-16);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--space-16);
+            margin-bottom: var(--space-24);
+            flex-wrap: wrap;
+        }
+
+        .skill-input {
+            display: flex;
+            gap: var(--space-8);
+            margin-bottom: var(--space-8);
+        }
+
+        .skill-tag {
+            display: inline-block;
+            padding: 6px 12px;
+            background: var(--primary);
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-right: var(--space-8);
+            margin-bottom: var(--space-8);
+        }
+
+        .skill-tag .remove {
+            margin-left: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .export-preview {
+            background: var(--bg-light);
+            border-radius: 8px;
+            padding: var(--space-16);
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: var(--space-16);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .locker-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .header-stats {
+                width: 100%;
+                justify-content: space-around;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div>
+                <h1>🎯 ScholarStack</h1>
+                <p style="opacity: 0.9; margin: 4px 0 0 0;">Your Achievement Vault</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalAchievements">0</div>
+                    <div>Achievements</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalHours">0</div>
+                    <div>Volunteer Hours</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="strengthScore">0</div>
+                    <div>Profile Strength</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Main Grid: Profile Strength + Locker -->
+        <div class="main-grid">
+            <div>
+                <div class="tabs">
+                    <div class="tab active" data-tab="locker">🗂️ Digital Locker</div>
+                    <div class="tab" data-tab="list">📋 All Achievements</div>
+                    <div class="tab" data-tab="scholarships">💰 Scholarship Matcher</div>
+                    <div class="tab" data-tab="export">📄 Export</div>
+                </div>
+
+                <!-- Digital Locker Tab -->
+                <div id="locker" class="tab-content active">
+                    <div class="locker-grid" id="lockerGrid">
+                        <div class="locker-door new">
+                            <div class="achievement-icon">➕</div>
+                            <div class="achievement-title">Add Achievement</div>
+                            <div class="achievement-category">Click to start</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Achievements Tab -->
+                <div id="list" class="tab-content">
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="openAddForm()">+ Add Achievement</button>
+                        <button class="btn btn-secondary" onclick="toggleSort()">Sort by <span id="sortLabel">Date</span></button>
+                    </div>
+                    <div id="achievementsList"></div>
+                </div>
+
+                <!-- Scholarship Matcher Tab -->
+                <div id="scholarships" class="tab-content">
+                    <div id="scholarshipsList"></div>
+                </div>
+
+                <!-- Export Tab -->
+                <div id="export" class="tab-content">
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="exportBragSheet()">📄 Generate Brag Sheet</button>
+                        <button class="btn btn-primary" onclick="exportCommonApp()">🎯 Common App Format</button>
+                        <button class="btn btn-primary" onclick="downloadJSON()">💾 Download Data</button>
+                    </div>
+                    <div id="exportPreview"></div>
+                </div>
+            </div>
+
+            <!-- Profile Strength Sidebar -->
+            <div class="profile-strength">
+                <div class="strength-title">🎖️ Profile Strength</div>
+                <div class="strength-meter">
+                    <div class="strength-bar" id="strengthBar" style="width: 0%;"></div>
+                </div>
+                <div style="text-align: center; font-size: 13px; color: var(--text-secondary); margin-bottom: var(--space-16);">
+                    <span id="strengthPercent">0</span>% Complete
+                </div>
+                <div style="font-size: 12px; line-height: 1.8;">
+                    <div class="category-breakdown">
+                        <span>Academic:</span>
+                        <span id="countAcademic" style="font-weight: 600;">0</span>
+                    </div>
+                    <div class="category-breakdown">
+                        <span>Leadership:</span>
+                        <span id="countLeadership" style="font-weight: 600;">0</span>
+                    </div>
+                    <div class="category-breakdown">
+                        <span>Volunteer:</span>
+                        <span id="countVolunteer" style="font-weight: 600;">0</span>
+                    </div>
+                    <div class="category-breakdown">
+                        <span>Arts:</span>
+                        <span id="countArts" style="font-weight: 600;">0</span>
+                    </div>
+                    <div class="category-breakdown">
+                        <span>Sport:</span>
+                        <span id="countSport" style="font-weight: 600;">0</span>
+                    </div>
+                    <div class="category-breakdown">
+                        <span>Professional:</span>
+                        <span id="countProfessional" style="font-weight: 600;">0</span>
+                    </div>
+                </div>
+                <div style="margin-top: var(--space-16); padding-top: var(--space-16); border-top: 1px solid var(--border-color); font-size: 12px;">
+                    <div id="suggestion" style="color: var(--accent); font-weight: 500;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Achievement Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Achievement</h2>
+                <button class="close-btn" onclick="closeModal()">✕</button>
+            </div>
+            <form id="achievementForm" onsubmit="saveAchievement(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Title *</label>
+                        <input type="text" id="title" required placeholder="e.g., Regional Science Fair Winner">
+                    </div>
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="category" required>
+                            <option value="">Select Category</option>
+                            <option value="Academic">📚 Academic</option>
+                            <option value="Leadership">👥 Leadership</option>
+                            <option value="Volunteer">🤝 Volunteer</option>
+                            <option value="Arts">🎨 Arts</option>
+                            <option value="Sport">⚽ Sport</option>
+                            <option value="Professional">💼 Professional</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date Received *</label>
+                        <input type="date" id="dateReceived" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Issuing Body</label>
+                        <input type="text" id="issuingBody" placeholder="School, Organization, etc.">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Description (Story)</label>
+                    <textarea id="description" placeholder="What did you do to earn this?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Impact Metric</label>
+                    <input type="text" id="impactMetric" placeholder="e.g., 1st place out of 500 or Raised $2k">
+                </div>
+
+                <div class="form-group">
+                    <label>Volunteer Hours (if applicable)</label>
+                    <input type="number" id="volunteerHours" min="0" step="0.5" placeholder="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Key Skills (comma-separated)</label>
+                    <div class="skill-input">
+                        <input type="text" id="skillInput" placeholder="e.g., Public Speaking, Python, Leadership">
+                    </div>
+                    <div id="skillsTags"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Evidence Link (optional)</label>
+                    <input type="url" id="evidenceLink" placeholder="https://example.com/certificate.pdf">
+                </div>
+
+                <div style="display: flex; gap: var(--space-16); margin-top: var(--space-24);">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save Achievement</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()" style="flex: 1;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let achievements = JSON.parse(localStorage.getItem('scholarStackData')) || [];
+        let currentEditId = null;
+        let currentSkills = [];
+        let sortBy = 'date';
+
+        const categoryIcons = {
+            'Academic': '📚',
+            'Leadership': '👥',
+            'Volunteer': '🤝',
+            'Arts': '🎨',
+            'Sport': '⚽',
+            'Professional': '💼'
+        };
+
+        const categoryEmoji = {
+            'Academic': '📚',
+            'Leadership': '👥',
+            'Volunteer': '🤝',
+            'Arts': '🎨',
+            'Sport': '⚽',
+            'Professional': '💼'
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupEventListeners();
+            updateUI();
+            loadSampleData();
+        });
+
+        function setupEventListeners() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const tabName = e.target.dataset.tab;
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    e.target.classList.add('active');
+                    document.getElementById(tabName).classList.add('active');
+                });
+            });
+
+            document.getElementById('lockerGrid').addEventListener('click', (e) => {
+                if (e.target.closest('.locker-door.new')) {
+                    openAddForm();
+                }
+            });
+
+            document.getElementById('skillInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    const skill = e.target.value.trim().replace(/,/g, '');
+                    if (skill && !currentSkills.includes(skill)) {
+                        currentSkills.push(skill);
+                        updateSkillsTags();
+                        e.target.value = '';
+                    }
+                }
+            });
+        }
+
+        function updateSkillsTags() {
+            const container = document.getElementById('skillsTags');
+            container.innerHTML = currentSkills.map(skill => 
+                `<span class="skill-tag">${skill}<span class="remove" onclick="removeSkill('${skill}')">×</span></span>`
+            ).join('');
+        }
+
+        function removeSkill(skill) {
+            currentSkills = currentSkills.filter(s => s !== skill);
+            updateSkillsTags();
+        }
+
+        function openAddForm() {
+            currentEditId = null;
+            currentSkills = [];
+            document.getElementById('modalTitle').textContent = 'Add Achievement';
+            document.getElementById('achievementForm').reset();
+            document.getElementById('skillsTags').innerHTML = '';
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+            currentEditId = null;
+            currentSkills = [];
+        }
+
+        function saveAchievement(event) {
+            event.preventDefault();
+
+            const achievement = {
+                id: currentEditId || Date.now(),
+                title: document.getElementById('title').value,
+                category: document.getElementById('category').value,
+                dateReceived: document.getElementById('dateReceived').value,
+                issuingBody: document.getElementById('issuingBody').value,
+                description: document.getElementById('description').value,
+                impactMetric: document.getElementById('impactMetric').value,
+                volunteerHours: parseFloat(document.getElementById('volunteerHours').value) || 0,
+                skills: currentSkills,
+                evidenceLink: document.getElementById('evidenceLink').value
+            };
+
+            if (currentEditId) {
+                achievements = achievements.map(a => a.id === currentEditId ? achievement : a);
+            } else {
+                achievements.push(achievement);
+            }
+
+            localStorage.setItem('scholarStackData', JSON.stringify(achievements));
+            updateUI();
+            closeModal();
+        }
+
+        function editAchievement(id) {
+            const achievement = achievements.find(a => a.id === id);
+            if (!achievement) return;
+
+            currentEditId = id;
+            currentSkills = [...achievement.skills];
+            document.getElementById('modalTitle').textContent = 'Edit Achievement';
+            document.getElementById('title').value = achievement.title;
+            document.getElementById('category').value = achievement.category;
+            document.getElementById('dateReceived').value = achievement.dateReceived;
+            document.getElementById('issuingBody').value = achievement.issuingBody;
+            document.getElementById('description').value = achievement.description;
+            document.getElementById('impactMetric').value = achievement.impactMetric;
+            document.getElementById('volunteerHours').value = achievement.volunteerHours;
+            document.getElementById('evidenceLink').value = achievement.evidenceLink;
+            updateSkillsTags();
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function deleteAchievement(id) {
+            if (confirm('Delete this achievement?')) {
+                achievements = achievements.filter(a => a.id !== id);
+                localStorage.setItem('scholarStackData', JSON.stringify(achievements));
+                updateUI();
+            }
+        }
+
+        function toggleSort() {
+            sortBy = sortBy === 'date' ? 'category' : 'date';
+            document.getElementById('sortLabel').textContent = sortBy === 'date' ? 'Date' : 'Category';
+            updateUI();
+        }
+
+        function updateUI() {
+            updateStats();
+            updateProfileStrength();
+            updateLockerGrid();
+            updateAchievementsList();
+            updateScholarships();
+        }
+
+        function updateStats() {
+            const totalHours = achievements.reduce((sum, a) => sum + a.volunteerHours, 0);
+            document.getElementById('totalAchievements').textContent = achievements.length;
+            document.getElementById('totalHours').textContent = Math.round(totalHours);
+        }
+
+        function updateProfileStrength() {
+            const categories = ['Academic', 'Leadership', 'Volunteer', 'Arts', 'Sport', 'Professional'];
+            const counts = {};
+            
+            categories.forEach(cat => {
+                counts[cat] = achievements.filter(a => a.category === cat).length;
+                document.getElementById(`count${cat}`).textContent = counts[cat];
+            });
+
+            // Calculate strength score
+            let strength = 0;
+            const maxPerCategory = 3;
+            categories.forEach(cat => {
+                strength += Math.min(counts[cat], maxPerCategory) / maxPerCategory * 100 / 6;
+            });
+
+            const hasDescription = achievements.filter(a => a.description).length / achievements.length;
+            const hasSkills = achievements.filter(a => a.skills.length > 0).length / achievements.length;
+            strength += (hasDescription * 5) + (hasSkills * 5);
+            strength = Math.min(100, strength);
+
+            document.getElementById('strengthBar').style.width = strength + '%';
+            document.getElementById('strengthPercent').textContent = Math.round(strength);
+            document.getElementById('strengthScore').textContent = Math.round(strength);
+
+            // Gap Finder
+            const weakest = categories
+                .filter(cat => counts[cat] === 0)
+                .slice(0, 1)[0];
+            const weak = categories
+                .filter(cat => counts[cat] < Math.max(...Object.values(counts)) / 2)
+                .slice(0, 2);
+
+            let suggestion = '';
+            if (weakest) {
+                suggestion = `💡 Try exploring <strong>${weakest}</strong> opportunities!`;
+            } else if (weak.length > 0) {
+                suggestion = `💡 Consider balancing with more <strong>${weak.join(' &amp; ')}</strong> achievements.`;
+            } else {
+                suggestion = '✨ Well-rounded profile! Keep it up!';
+            }
+            document.getElementById('suggestion').innerHTML = suggestion;
+        }
+
+        function updateLockerGrid() {
+            const grid = document.getElementById('lockerGrid');
+            const sorted = sortAchievements([...achievements]);
+            
+            const lockers = sorted.slice(0, 8).map(a => `
+                <div class="locker-door" onclick="editAchievement(${a.id})" title="${a.title}">
+                    <div class="achievement-icon">${categoryEmoji[a.category]}</div>
+                    <div class="achievement-title">${a.title.substring(0, 18)}</div>
+                    <div class="achievement-category">${a.category}</div>
+                </div>
+            `).join('');
+
+            grid.innerHTML = lockers + (achievements.length > 0 ? `
+                <div class="locker-door new" onclick="openAddForm()" title="Add more">
+                    <div class="achievement-icon">➕</div>
+                    <div class="achievement-title">Add More</div>
+                    <div class="achievement-category">Click to add</div>
+                </div>
+            ` : `
+                <div class="locker-door new" onclick="openAddForm()" title="Start your vault">
+                    <div class="achievement-icon">➕</div>
+                    <div class="achievement-title">Add Achievement</div>
+                    <div class="achievement-category">Click to start</div>
+                </div>
+            `);
+        }
+
+        function updateAchievementsList() {
+            const list = document.getElementById('achievementsList');
+            if (achievements.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>No achievements yet</h3>
+                        <p>Start building your achievement vault!</p>
+                        <button class="btn btn-primary" onclick="openAddForm()" style="margin-top: var(--space-16);">Add Your First Achievement</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const sorted = sortAchievements([...achievements]);
+            list.innerHTML = sorted.map(a => `
+                <div class="achievement-card ${a.category.toLowerCase()}">
+                    <div class="achievement-card-header">
+                        <div>
+                            <div class="achievement-card-title">${categoryEmoji[a.category]} ${a.title}</div>
+                            <div class="achievement-card-date">${new Date(a.dateReceived).toLocaleDateString()}</div>
+                        </div>
+                    </div>
+                    ${a.description ? `<div class="achievement-card-body">"${a.description}"</div>` : ''}
+                    <div class="achievement-card-meta">
+                        <span class="badge">${a.category}</span>
+                        ${a.issuingBody ? `<span class="badge">${a.issuingBody}</span>` : ''}
+                        ${a.impactMetric ? `<span class="badge">🏆 ${a.impactMetric}</span>` : ''}
+                        ${a.volunteerHours ? `<span class="badge">⏱️ ${a.volunteerHours}h</span>` : ''}
+                        ${a.skills.map(s => `<span class="badge">${s}</span>`).join('')}
+                    </div>
+                    <div class="card-actions" style="margin-top: var(--space-12);">
+                        <button class="btn btn-secondary btn-small" onclick="editAchievement(${a.id})">✏️ Edit</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteAchievement(${a.id})">🗑️ Delete</button>
+                        ${a.evidenceLink ? `<a href="${a.evidenceLink}" target="_blank" class="btn btn-secondary btn-small">🔗 View</a>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateScholarships() {
+            if (achievements.length === 0) {
+                document.getElementById('scholarshipsList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💰</div>
+                        <h3>Add achievements to find scholarships</h3>
+                        <p>ScholarStack will match you with relevant scholarships based on your achievements.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const scholarships = generateScholarshipMatches();
+            document.getElementById('scholarshipsList').innerHTML = scholarships.map(s => `
+                <div class="scholarship-card">
+                    <div class="scholarship-name">${s.name}</div>
+                    <div class="scholarship-match">Match Reason: ${s.reason}</div>
+                </div>
+            `).join('');
+        }
+
+        function generateScholarshipMatches() {
+            const matches = [];
+            const skillsStr = achievements.flatMap(a => a.skills).join(' ').toLowerCase();
+
+            // Sample scholarships
+            const scholarships = [
+                { name: 'STEM Excellence Grant', keywords: ['python', 'coding', 'science', 'math'], reason: 'Your tech skills match' },
+                { name: 'Leadership Award Fund', keywords: ['leadership', 'president', 'officer'], reason: 'Your leadership role' },
+                { name: 'Community Service Scholarship', keywords: ['volunteer', 'community', 'service'], reason: 'Your volunteer hours' },
+                { name: 'Arts & Culture Grant', keywords: ['arts', 'music', 'design', 'theater'], reason: 'Your arts achievements' },
+                { name: 'Athletic Excellence Award', keywords: ['sport', 'athlete', 'competition'], reason: 'Your sports excellence' },
+                { name: 'Academic Merit Scholarship', keywords: ['academic', 'gpa', 'honors'], reason: 'Your academic success' }
+            ];
+
+            scholarships.forEach(scholarship => {
+                const matched = scholarship.keywords.some(keyword => 
+                    skillsStr.includes(keyword) || 
+                    achievements.some(a => a.description.toLowerCase().includes(keyword) || a.title.toLowerCase().includes(keyword))
+                );
+                if (matched) matches.push(scholarship);
+            });
+
+            return matches.length > 0 ? matches : scholarships.slice(0, 3);
+        }
+
+        function exportBragSheet() {
+            if (achievements.length === 0) {
+                alert('Add some achievements first!');
+                return;
+            }
+
+            const categories = ['Academic', 'Leadership', 'Volunteer', 'Arts', 'Sport', 'Professional'];
+            let sheet = 'BRAG SHEET FOR LETTERS OF RECOMMENDATION\n';
+            sheet += '=====================================\n\n';
+
+            categories.forEach(cat => {
+                const catAchievements = achievements.filter(a => a.category === cat);
+                if (catAchievements.length > 0) {
+                    sheet += `${cat.toUpperCase()}\n`;
+                    sheet += '---\n';
+                    catAchievements.forEach(a => {
+                        sheet += `• ${a.title}`;
+                        if (a.impactMetric) sheet += ` (${a.impactMetric})`;
+                        if (a.dateReceived) sheet += ` - ${new Date(a.dateReceived).getFullYear()}`;
+                        sheet += '\n';
+                        if (a.description) sheet += `  ${a.description}\n`;
+                    });
+                    sheet += '\n';
+                }
+            });
+
+            document.getElementById('exportPreview').innerHTML = `<div class="export-preview">${sheet}</div>`;
+        }
+
+        function exportCommonApp() {
+            if (achievements.length === 0) {
+                alert('Add some achievements first!');
+                return;
+            }
+
+            let app = '';
+            achievements.forEach(a => {
+                let desc = a.description || a.title;
+                if (desc.length > 150) {
+                    desc = desc.substring(0, 147) + '...';
+                }
+                app += `[${a.category}] ${a.title}\n${desc}\n\n`;
+            });
+
+            document.getElementById('exportPreview').innerHTML = `<div class="export-preview">${app}</div>`;
+        }
+
+        function downloadJSON() {
+            const data = {
+                exportDate: new Date().toISOString(),
+                achievements: achievements,
+                stats: {
+                    total: achievements.length,
+                    volunteerHours: achievements.reduce((sum, a) => sum + a.volunteerHours, 0)
+                }
+            };
+
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(data, null, 2)));
+            element.setAttribute('download', 'scholarstack-data.json');
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+
+        function sortAchievements(array) {
+            if (sortBy === 'date') {
+                return array.sort((a, b) => new Date(b.dateReceived) - new Date(a.dateReceived));
+            } else {
+                return array.sort((a, b) => a.category.localeCompare(b.category));
+            }
+        }
+
+        function loadSampleData() {
+            if (achievements.length === 0) {
+                // Optional: Load sample data for demo
+                // achievements = [{...sample data...}];
+                // localStorage.setItem('scholarStackData', JSON.stringify(achievements));
+                // updateUI();
+            }
+        }
+    </script>
+</body>
+</html>

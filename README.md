@@ -1,4 +1,4 @@
-# ScholarStack - Achievement Vault
+# 🎯 ScholarStack - Achievement Vault
 
 A digital achievement tracking and scholarship matching platform for students.
 
@@ -12,24 +12,48 @@ A digital achievement tracking and scholarship matching platform for students.
 
 ## Supported Categories
 
-📚 Academic  
-👥 Leadership  
-🤝 Volunteer  
-🎨 Arts  
-⚽ Sport  
-💼 Professional
+- 📚 Academic
+- 👥 Leadership
+- 🤝 Volunteer
+- 🎨 Arts
+- ⚽ Sport
+- 💼 Professional
 
 ## Getting Started
 
-Simply open `index.html` in your web browser. No build process or dependencies required!
+1. Open `index.html` in your web browser (or visit the deployed version)
+2. Click "Add Achievement"
+3. Fill in your achievement details (title, category, date, description, impact, skills)
+4. Watch your profile strength meter grow!
+5. Export your brag sheet anytime for college applications
 
-## Data Storage
+## Features in Detail
 
-All achievements are stored locally in your browser using localStorage. Your data stays private and secure on your device.
+### Achievement Tracking
+
+- Title & date received
+- Issuing organization
+- Description with 350 character limit
+- Impact metrics (placement, money raised, etc.)
+- Volunteer hours tracking
+- Key skills demonstrated
+- Evidence links (certificates, portfolios)
+
+### Export Options
+
+- **Brag Sheet** - Perfect for teacher recommendations
+- **Common App Format** - Auto-truncated to 150 characters
+- **JSON Data** - Complete data backup
+
+## Privacy
+
+- All data is stored locally in your browser using localStorage
+- No server uploads
+- 100% private and secure on your device
 
 ## Deployment
 
-This app is deployed on Vercel and can be accessed at your Vercel deployment URL.
+This app can be deployed on Vercel, GitHub Pages, or any static hosting service.
 
 ## Technologies
 
@@ -37,8 +61,12 @@ This app is deployed on Vercel and can be accessed at your Vercel deployment URL
 - No frameworks or dependencies
 - Responsive design
 - Dark mode support
+- Local Storage API
 
 ## License
 
-MIT
+MIT License - Feel free to fork and customize!
 
+## Author
+
+Created by [@rishab-coder](https://github.com/rishab-coder)
